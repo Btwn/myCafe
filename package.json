@@ -1,0 +1,23 @@
+{
+  "name": "mycafe",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "chai": "^4.2.0",
+    "chai-as-promised": "^7.1.1",
+    "cucumber": "^5.0.2",
+    "mocha": "^5.2.0",
+    "sinon": "^7.0.0",
+    "sinon-chai": "^3.2.0"
+  },
+  "dependencies": {
+    "q": "^1.0.1"
+  }
+}
