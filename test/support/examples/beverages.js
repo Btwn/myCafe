@@ -14,5 +14,12 @@ module.exports = {
             name: 'Mocaccino',
             price: 2.30
         }
-    }    
+    },
+    capuccino: function(){
+        return {
+            id: 'capuccino id',
+            name: 'Capuccino',
+            price: 2
+        }
+    }  
 }
