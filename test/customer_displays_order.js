@@ -4,22 +4,11 @@ const chai = require('chai')
 const expect = chai.expect
 const sinon = require('sinon')
 const newStorage = require('./support/storageDouble')
+const order = require('./support/examples/orders')
 const orderSystemWith = require('../lib/orders')
 const Q = require('q')
 
 chai.use(require('chai-as-promised'))
-
-function promiseFor(value){
-    return Q.delay(1).then(function(){
-        return value
-    })
-}
-
-function failingPromiseWith(error){
-    return Q.delay(1).then(function(){
-        throw error
-    })
-}
 
 describe('El cliente visualiza la orden', function(){
     beforeEach(function(){
@@ -28,10 +17,7 @@ describe('El cliente visualiza la orden', function(){
     })
     context('Dado que la orden esta vacia', function(){
         beforeEach(function(){
-            this.order = this.orderStorage.alreadyContains({
-                id: 'algun id de orden vacio',
-                data: []
-            })
+            this.order = this.orderStorage.alreadyContains(order.empty())
             this.result = this.orderSystem.display(this.order.id)
         })
         it('no deberia mostrar articulos en la orden', function(){
@@ -55,37 +41,19 @@ describe('El cliente visualiza la orden', function(){
         })
     })
 
-    function orderAlreadyContainsItem(orderDAO, orderId, items){
-        orderDAO.byId
-            .withArgs(orderId)
-            .callsArgWithAsync(1, null, items)
-        return items
-    }
-
     context('Dado que la orden contiene bebidas', function(){
-        this.beforeEach(function(){
-            this.orderId = 'alguna orden no vacia'
-            this.expresso = {
-                id: 'expresso id',
-                name: 'Expresso',
-                price: 1.50
-            }
-            this.mocaccino = {
-                id: 'mocaccino id',
-                name: 'Mocaccino',
-                price: 2.30
-            }
-            this.orderItems = orderAlreadyContainsItem(this.orderDAO, this.orderId, [
-                { beverage: this.expresso, quantity: 1 },
-                { beverage: this.mocaccino, quantity: 2 }
-            ])
-            this.result = this.orderSystem.display(this.orderId)
-        
+        beforeEach(function(){
+            this.order = this.orderStorage
+                .alreadyContains(order.withItems([
+                    { beverage: 'expresso', quantity: 1 },
+                    { beverage: 'mocaccino', quantity: 2 }
+                ]))
+            this.result = this.orderSystem.display(this.order.id)
         })
         it('deberia de mostrar un articulo por bebida', function(){
             return expect(this.result).to.eventually
                 .have.property('items')
-                .that.is.deep.equal(this.orderItems)
+                .that.is.deep.equal(this.order.data)
         })
         it('deberia de mostrar la suma de los precios de cada unidad como precio total', function(){
             return expect(this.result).to.eventually
